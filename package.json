@@ -1,0 +1,41 @@
+{
+  "name": "susstaber446-ops_spacegame",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "detect-libc": "^2.1.2",
+    "fdir": "^6.5.0",
+    "lightningcss": "^1.33.0",
+    "lightningcss-android-arm64": "^1.33.0",
+    "nanoid": "^3.3.20",
+    "phaser": "^4.2.1",
+    "picocolors": "^1.1.1",
+    "picomatch": "^4.0.7",
+    "postcss": "^8.5.29",
+    "rolldown": "^1.2.13",
+    "source-map-js": "^1.2.2",
+    "three": "^0.186.1",
+    "tinyglobby": "^0.2.17"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/susstaber446-ops/SpaceGame.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/susstaber446-ops/SpaceGame/issues"
+  },
+  "homepage": "https://github.com/susstaber446-ops/SpaceGame#readme",
+  "devDependencies": {
+    "vite": "^8.3.3"
+  }
+}

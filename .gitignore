@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+pnp/
+
+# Production builds
+dist/
+dist-ssr/
+*.local
+
+# Logs
+*.log
+.pocket-devserver.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+.env
+.env.*
+!.env.example
+
+# Vite
+.vite/
+
+# Standard ignore rules
+.cache/
