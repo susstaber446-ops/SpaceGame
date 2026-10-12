@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import Spaceship from './Spaceship.js';
+import StarField from './StarField.js';
 
 const scene = new THREE.Scene();
 scene.fog = new THREE.FogExp2(0x050510, 0.015);
@@ -17,42 +19,18 @@ let targetY = 0;
 const maxHorizontal = 4.5;
 const maxVertical = 3.0;
 
-let ship;
+// Instantiate spaceship and starfield
+const spaceship = new Spaceship();
+const ship = spaceship.group;
+scene.add(ship);
+const starfield = new StarField(5000);
+scene.add(starfield.stars);
 
-function createShip() {
-  const geometry = new THREE.Group();
-
-  const fuselage = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 2, 8), new THREE.MeshStandardMaterial({ color: 0x00ff00 }));
-  fuselage.position.y = 0;
-  geometry.add(fuselage);
-
-  const wingGeometry = new THREE.PlaneGeometry(1.5, 0.3);
-  const wingMaterial = new THREE.MeshStandardMaterial({ color: 0x0000ff });
-
-  const leftWing = new THREE.Mesh(wingGeometry, wingMaterial);
-  leftWing.rotation.z = Math.PI / 4;
-  leftWing.position.set(-0.75, 0, 0);
-  geometry.add(leftWing);
-
-  const rightWing = new THREE.Mesh(wingGeometry, wingMaterial);
-  rightWing.rotation.z = -Math.PI / 4;
-  rightWing.position.set(0.75, 0, 0);
-  geometry.add(rightWing);
-
-  const cockpit = new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 16), new THREE.MeshStandardMaterial({ color: 0x333333 }));
-  cockpit.position.y = 1;
-  geometry.add(cockpit);
-
-  const thrusterGeometry = new THREE.CylinderGeometry(0.15, 0.3, 0.5, 8);
-  const thrusterMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
-
-  const thruster = new THREE.Mesh(thrusterGeometry, thrusterMaterial);
-  thruster.position.set(0, -1, 0);
-  geometry.add(thruster);
-
-  ship = geometry;
-  scene.add(ship);
-}
+const ambientLight = new THREE.AmbientLight(0x404040, 1);
+const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+directionalLight.position.set(1, 1, 1);
+scene.add(ambientLight);
+scene.add(directionalLight);
 
 function updateShipTarget(e) {
   const normX = (e.clientX / window.innerWidth) * 2 - 1;
@@ -111,9 +89,6 @@ function restartGame() {
   // Restart game logic here
   playSound('score');
 }
-
-// Create the ship
-createShip();
 
 // Game loop
 function animate() {
