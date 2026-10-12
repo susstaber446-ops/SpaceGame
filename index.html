@@ -1,12 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Space Flight Runner Game</title>
-    <link rel="stylesheet" href="src/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#030014">
+  <title>HYPERDRIVE // 3D Cosmic Interceptor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="src/style.css">
 </head>
 <body>
-    <script type="module" src="src/main.js"></script>
+  <!-- 3D Canvas Mount -->
+  <div id="game-container"></div>
+
+  <!-- HUD Overlay -->
+  <div id="hud" class="hidden">
+    <!-- Top Bar -->
+    <div class="hud-top">
+      <div class="hud-card shield-card">
+        <div class="card-label"><span class="icon">🛡️</span> SHIELD</div>
+        <div class="shield-bar-bg">
+          <div id="shield-fill" class="shield-bar-fill" style="width: 100%;"></div>
+        </div>
+        <div id="shield-text" class="card-value">100%</div>
+      </div>
+
+      <div class="hud-center">
+        <div class="score-container">
+          <div class="card-label">SCORE</div>
+          <div id="score-display" class="score-digits">00000</div>
+        </div>
+        <div id="combo-badge" class="combo-badge hidden">2X BOOST!</div>
+      </div>
+
+      <div class="hud-card speed-card">
+        <div class="card-label"><span class="icon">⚡</span> VELOCITY</div>
+        <div id="speed-display" class="card-value">120 <span class="unit">KM/S</span></div>
+        <div id="dist-display" class="dist-value">DIST: 0.0 KM</div>
+      </div>
+    </div>
+
+    <!-- Screen Flash (Damage / Ring pickup) -->
+    <div id="screen-flash" class="screen-flash"></div>
+
+    <!-- Mobile Virtual Flight Controls -->
+    <div class="hud-bottom">
+      <div class="control-hint">
+        <span class="pulse-dot"></span>
+        <span class="hint-text">DRAG TO STEER // HOLD WARP TO BOOST</span>
+      </div>
+      <button id="btn-boost" class="boost-btn" aria-label="Hyper Boost">
+        <div class="boost-glow"></div>
+        <div class="boost-content">
+          <span class="boost-icon">🚀</span>
+          <span class="boost-label">WARP</span>
+        </div>
+        <svg class="boost-ring" viewBox="0 0 100 100">
+          <circle class="ring-bg" cx="50" cy="50" r="44"/>
+          <circle id="boost-ring-fill" class="ring-fill" cx="50" cy="50" r="44"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Pause Button -->
+    <button id="btn-pause" class="pause-btn" aria-label="Pause">⏸</button>
+  </div>
+
+  <!-- Touch Steering Visualizer -->
+  <div id="touch-reticle" class="touch-reticle hidden"></div>
+
+  <!-- Modal Screens -->
+  <!-- 1. Start Screen -->
+  <div id="screen-start" class="modal-overlay">
+    <div class="modal-card">
+      <div class="cyber-badge">SYSTEMS ONLINE // INTERCEPTOR CLASS-IX</div>
+      <h1 class="game-title">HYPER<span class="highlight">DRIVE</span></h1>
+      <p class="game-subtitle">DEEP SPACE RUNNER // NEON VOID PROTOCOL</p>
+
+      <div class="instructions-grid">
+        <div class="instruction-item">
+          <div class="instr-icon">👆</div>
+          <div class="instr-text">
+            <strong>DRAG / WASD</strong>
+            <span>3D Smooth Analog Steering</span>
+          </div>
+        </div>
+        <div class="instruction-item">
+          <div class="instr-icon">💫</div>
+          <div class="instr-text">
+            <strong>NEON RINGS</strong>
+            <span>+100 PTS & Shield Recharge</span>
+          </div>
+        </div>
+        <div class="instruction-item">
+          <div class="instr-icon">☄️</div>
+          <div class="instr-text">
+            <strong>ASTEROIDS</strong>
+            <span>Dodge to Avoid Hull Damage</span>
+          </div>
+        </div>
+        <div class="instruction-item">
+          <div class="instr-icon">🚀</div>
+          <div class="instr-text">
+            <strong>WARP BOOST</strong>
+            <span>Double Speed & Multiplier</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="best-score-preview" id="start-high-score">CAREER BEST: 0</div>
+
+      <button id="btn-start" class="btn-primary">
+        <span class="btn-shine"></span>
+        <span>LAUNCH MISSION</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 2. Game Over Screen -->
+  <div id="screen-gameover" class="modal-overlay hidden">
+    <div class="modal-card gameover-card">
+      <div class="danger-badge">CRITICAL HULL FAILURE</div>
+      <h2 class="gameover-title">MISSION COMPROMISED</h2>
+
+      <div class="stats-table">
+        <div class="stat-row">
+          <span>FINAL SCORE</span>
+          <strong id="go-score" class="accent-text">0</strong>
+        </div>
+        <div class="stat-row">
+          <span>RINGS COLLECTED</span>
+          <strong id="go-rings">0</strong>
+        </div>
+        <div class="stat-row">
+          <span>DISTANCE TRAVELED</span>
+          <strong id="go-distance">0.0 KM</strong>
+        </div>
+        <div class="stat-row highscore-row">
+          <span>CAREER BEST</span>
+          <strong id="go-best" class="gold-text">0</strong>
+        </div>
+      </div>
+
+      <button id="btn-restart" class="btn-primary">
+        <span class="btn-shine"></span>
+        <span>RE-DEPLOY INTERCEPTOR</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 3. Pause Screen -->
+  <div id="screen-pause" class="modal-overlay hidden">
+    <div class="modal-card pause-card">
+      <h2>MISSION PAUSED</h2>
+      <p>THRUSTERS IN STANDBY</p>
+      <button id="btn-resume" class="btn-primary">
+        <span>RESUME FLIGHT</span>
+      </button>
+    </div>
+  </div>
+
+  <script type="module" src="src/main.js"></script>
 </body>
 </html>
